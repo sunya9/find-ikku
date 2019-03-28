@@ -34,15 +34,9 @@ function findIkkuInternal(words, options) {
     )
     if (currentLen == 0 && !isIndependentWord(word)) return null
     const willLength = currentLen + actuallyPronunciationLength(word.reading)
-    // TODO: support allow jiamari
-    // if(options.loose && !tooMuch && willLength === correctPhraseLengths[l] + 1) {
-    //   tooMuch = true
-    //   console.log(res.map(word => word.surface_form).join(''), 'tooMuch', tooMuch)
-    // } else
     if (willLength > correctPhraseLengths[l]) return null
     res[l].push(word)
     if (willLength == correctPhraseLengths[l]) {
-      // if((willLength == correctPhraseLengths[l]) || (options.loose && tooMuch && willLength === correctPhraseLengths[l] + 1)) {
       l++
     }
   }
