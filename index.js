@@ -16,15 +16,12 @@ const actuallyPronunciationLength = reading =>
   reading.replace(/[ぁぃぅぇぉゃゅょァィゥェォャュョ]/g, '').length
 const isIndependentWord = word =>
   independentWords.some(independant => word.pos === independant)
-const defaultOptions = {
-  loose: false
-}
+
 let tokenizer
 
-function findIkkuInternal(words, options) {
+function findIkkuInternal(words) {
   const res = [[], [], []]
   let l = 0
-  let tooMuch = false
 
   for (let i = 0; i < words.length && l < 3; i++) {
     const word = words[i]
@@ -49,17 +46,12 @@ function findIkkuInternal(words, options) {
       ),
     0
   )
-  return resLength === correctLength ||
-    (options.loose && tooMuch && resLength === correctLength + 1)
+  return resLength === correctLength
     ? res.map(phrase => phrase.map(word => word.surface_form).join(''))
     : null
 }
 
-function findIkkus(text, options) {
-  options = {
-    ...defaultOptions,
-    ...options
-  }
+function findIkkus(text) {
   const tokenized = tokenizer.tokenizeForSentence(text)
   const words = tokenized.filter(word => word.basic_form !== '*')
 
@@ -69,12 +61,12 @@ function findIkkus(text, options) {
     return res
   }, [])
   const ikkus = beginningPoints
-    .map(point => findIkkuInternal(words.slice(point), options))
+    .map(point => findIkkuInternal(words.slice(point)))
     .filter(ikku => !!ikku)
   return ikkus
 }
 
-const findIkku = async (text, options) => await findIkkus(text, options)[0]
+const findIkku = async text => await findIkkus(text)[0]
 
 async function ready() {
   tokenizer = await getTokenizer()
